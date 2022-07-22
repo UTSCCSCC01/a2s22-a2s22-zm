@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/src/ApiGateway/ApiGateway.iml" filepath="$PROJECT_DIR$/src/ApiGateway/ApiGateway.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/a2s22-a2s22-zm.iml" filepath="$PROJECT_DIR$/.idea/a2s22-a2s22-zm.iml" />
+      <module fileurl="file://$PROJECT_DIR$/src/locationmicroservice/locationmicroservice.iml" filepath="$PROJECT_DIR$/src/locationmicroservice/locationmicroservice.iml" />
+      <module fileurl="file://$PROJECT_DIR$/src/UserMicroservice/usermicroservice.iml" filepath="$PROJECT_DIR$/src/UserMicroservice/usermicroservice.iml" />
+    </modules>
+  </component>
+</project>
