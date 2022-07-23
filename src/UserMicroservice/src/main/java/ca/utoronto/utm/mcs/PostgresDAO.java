@@ -24,6 +24,36 @@ public class PostgresDAO {
 
 	// *** implement database operations here *** //
 
+    public int user_login(String email, String password){
+        String query;
+        String old_password;
+        int count = 0;
+        if (email != null) {
+            query = "SELECT * FROM users WHERE email = %s";
+            query = String.format(query, email);
+            ResultSet rs = this.st.executeQuery(query);
+            while(rs.next()){
+                count++;
+                if(count == 1){
+                    old_password = rs.getString("password");
+                } else if (count > 1) {
+                    return 500;
+                }
+            }
+            if(count == 1){
+                if(old_password.equals(password)){
+                    return 200;
+                }
+                else{
+                    return 401;
+                }
+            }
+        }
+        else{
+            return 400;
+        }
+    }
+
     public ResultSet getUsersFromUid(int uid) throws SQLException {
         String query = "SELECT * FROM users WHERE uid = %d";
         query = String.format(query, uid);
