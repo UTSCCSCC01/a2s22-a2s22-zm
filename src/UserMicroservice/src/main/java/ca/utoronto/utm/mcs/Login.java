@@ -46,10 +46,11 @@ public class Login extends Endpoint {
         String path = r.getRequestURI().getPath();
         int api_response;
         try{
+            JSONObject deserailized = new JSONObject(body);
             switch(path){
                 //distinguish the path
                 case "/api/user/login":
-                    api_response = this.user_login();
+                    api_response = this.user_login(deserailized);
                     sendStatus(r,api_response);
                     break;
             }
