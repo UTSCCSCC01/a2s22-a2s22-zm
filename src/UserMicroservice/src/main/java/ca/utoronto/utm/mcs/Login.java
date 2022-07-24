@@ -14,7 +14,7 @@ public class Login extends Endpoint {
      * information of the user in the database.
      */
     
-    public int user_login(JSONObject deserialized){
+    public void user_login(HttpExchange r, JSONObject deserialized){
         String email, password;
         int user_login_res;
         try{
@@ -23,20 +23,37 @@ public class Login extends Endpoint {
                 email = deserialized.getString("email");
                 password = deserialized.getString("password");
             } else{
-                return 400;
+                this.sendStatus(r, 400);
+                return;
             }
         } catch(Exception e){
             //can't find the string from deserailized
             e.printStackTrace();
-            return 500;
+            this.sendStatus(r, 500);
+            return;
         }
         try{
-            user_login_res = this.dao.user_login(email, password);
+            JSONObject new_data = this.dao.user_login(email, password);
+            if(new_data.has("code")){
+                user_login_res = new_data.getInt("code");
+            }
+            if(new_data.has("uid")){
+                uid = new_data.getString(uid);
+            }
+            JSONObject jsonObject = new JSONObject();
+            if(user_login_res == 200){
+                jsonObject.put("uid", uid);
+                this.sendResponse(r,jsonObject, 200);
+            }
+            else{
+                this.sendStatus(r,user_login_res);
+            }
         } catch (Exception e){
             e.printStackTrace();
-            return 500;
+            this.sendStatus(r, 500);
+            return;
         }
-        return user_login_res；
+        return;
     }
 
     @Override
@@ -56,6 +73,7 @@ public class Login extends Endpoint {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            this.sendStatus(r, 500);
         }   
     }
 
