@@ -6,6 +6,8 @@ package ca.utoronto.utm.mcs;
  * and/or recieve http requests from other microservices. Any other 
  * imports are fine.
  */
+import java.io.OutputStream;
+import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -18,6 +20,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 public class Request extends Endpoint {
+    static int PORT = 8000;
+    static final String LOCATION_SERVICE = "src_locationmicroservice";
 
     /**
      * POST /trip/request
@@ -28,15 +32,50 @@ public class Request extends Endpoint {
      * from navigation endpoint in location microservice
      */
 
+    public static HttpResponse httpRequest(String method, String hostname, String endpoint, String body) {
+        try {
+            URI uri = new URI(hostname + PORT + endpoint);
+            HttpClient httpClient = HttpClient.newBuilder().build();
+            HttpRequest httpRequest = HttpRequest.newBuilder().uri(uri).method(method, HttpRequest.BodyPublishers.ofString(body)).build();
+            HttpResponse<String> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+
+            return httpResponse;
+
+
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     @Override
     public void handlePost(HttpExchange r) throws IOException,JSONException{
+        JSONObject jsonObject = new JSONObject();
+        if(!r.getRequestMethod().equals("POST")){
+            jsonObject.put("status", "BAD REQUEST");
+            r.sendResponseHeaders(400, jsonObject.toString().length());
+            writeOutputStream(r, jsonObject.toString());
+            return;
+        }
         // TODO
-        JSONObject body = new JSONObject(Utils.convert(r.getRequestBody()));
+        jsonObject = new JSONObject(Utils.convert(r.getRequestBody()));
         String fields[] = {"uid", "radius"};
         Class<?> fieldClasses[] = {String.class, Integer.class};
-        if (!validateFields(body, fields, fieldClasses)) {
+        if (!validateFields(jsonObject, fields, fieldClasses)) {
             this.sendStatus(r, 400);
             return;
         }
+
+        HttpResponse<String> httpResponse = httpRequest("GET", LOCATION_SERVICE, "/location/nearbyDriver/" + jsonObject.get("uid") + "?radius=" + jsonObject.getString("radius"), "");
+        r.sendResponseHeaders(httpResponse.statusCode(), httpResponse.body().length());
+        OutputStream os= r.getResponseBody();
+        os.write(httpResponse.body().getBytes());
+        os.close();
     }
 }
