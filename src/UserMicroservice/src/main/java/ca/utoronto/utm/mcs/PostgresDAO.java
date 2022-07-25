@@ -34,7 +34,7 @@ public class PostgresDAO {
         JSONObject jsonObject = new JSONObject();
         int count = 0;
         if (email != null) {
-            query = "SELECT * FROM users WHERE email = %s";
+            query = "SELECT * FROM users WHERE email = '%s'";
             query = String.format(query, email);
             ResultSet rs = this.st.executeQuery(query);
             while(rs.next()){
@@ -49,7 +49,7 @@ public class PostgresDAO {
             if(count == 1){
                 if(old_password.equals(password)){
                     code = 200;
-                    query = "SELECT * FROM users WHERE email = %s";
+                    query = "SELECT * FROM users WHERE email = '%s'";
                     query = String.format(query, email);
                     rs = this.st.executeQuery(query);
                     if(rs.next()){
@@ -79,12 +79,12 @@ public class PostgresDAO {
     }
     // check whether the user is able to register
     public JSONObject user_register(String name, String email, String password) throws SQLException, JSONException {
-        int code;
+        int code = 500;
         String uid = "";
         JSONObject jsonObject = new JSONObject();
         String query;
         if(email!=null){
-            query = "SELECT * FROM users WHERE email = %s";
+            query = "SELECT * FROM users WHERE email = '%s'";
             query = String.format(query, email);
             ResultSet rs = this.st.executeQuery(query);
             if(rs.next()){
@@ -92,18 +92,17 @@ public class PostgresDAO {
             }
             else{
                 //insert the new user into table
-                query = "INSERT INTO users (name = %s, email = %s, password = %s)";
+                query = "INSERT INTO users (prefer_name, email, password, rides, isDriver) VALUES ('%s', '%s', '%s', 0, false)";
                 query = String.format(query, name, email, password);
-                rs = this.st.executeQuery(query);
+                this.st.execute(query);
                 //find the new user's uid
-                query = "SELECT * FROM users WHERE email = %s";
+                query = "SELECT * FROM users WHERE email = '%s'";
                 query = String.format(query, email);
                 rs = this.st.executeQuery(query);
                 if(rs.next()){
                     uid = rs.getString("uid");
                     code = 200;
                 }
-                code = 409;
             }
         }
         else {

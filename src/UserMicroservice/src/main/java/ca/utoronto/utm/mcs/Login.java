@@ -68,7 +68,7 @@ public class Login extends Endpoint {
             JSONObject deserialized = new JSONObject(body);
             switch(path){
                 //distinguish the path
-                case "/api/user/login":
+                case "/user/login":
                     this.user_login(r, deserialized);
                     break;
             }

@@ -74,7 +74,7 @@ public class Register extends Endpoint {
             JSONObject deserialized = new JSONObject(body);
             switch (path){
                 //distinguish the path
-                case "/api/user/register":
+                case "/user/register":
                     this.user_register(r,deserialized);
                     break;
             }

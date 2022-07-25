@@ -68,7 +68,7 @@ public class RequestRouter implements HttpHandler {
 		}
 
 		String path = r.getRequestURI().getPath();
-		String tar = path.split("/")[0];
+		String tar = path.split("/")[1];
 		String method = r.getRequestMethod();
 		switch (tar) {
 			case "location":

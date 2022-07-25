@@ -71,10 +71,9 @@ public class AppTest {
     @Order(1)
     void addActorPass() {
         try {
-
             JSONObject jsonObject1 = new JSONObject();
             jsonObject1.put("name", "Alexander Hamilton");
-            jsonObject1.put("email", "123@gmail.com");
+            jsonObject1.put("email", "456@gmail.com");
             jsonObject1.put("password", "123456");
             HttpResponse<String> httpResponse1 = httpRequest("POST", "/user/register", jsonObject1.toString());
             assertEquals(200, httpResponse1.statusCode());
