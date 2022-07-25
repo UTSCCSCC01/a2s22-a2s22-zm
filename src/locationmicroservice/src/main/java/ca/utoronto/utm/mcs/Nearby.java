@@ -50,17 +50,22 @@ public class Nearby extends Endpoint {
                 Double longitude;
                 Double latitude;
                 String street;
+                String driverUID;
                 JSONObject data = new JSONObject();
                 JSONObject driverID = new JSONObject();
                 while(result.hasNext()){
                     record = result.next();
-                    longitude = record.get("longitude").asDouble();
-                    latitude = record.get("latitude").asDouble();
-                    street = record.get("street").asString();
+                    longitude = record.get(0).get("longitude").asDouble();
+                    latitude = record.get(0).get("latitude").asDouble();
+                    street = record.get(0).get("street").asString();
+                    driverUID = record.get(0).get("uid").asString();
+                    if(record.get(0).get("is_driver").asBoolean()){
+
+                    }
                     driverID.put("longitude",longitude);
                     driverID.put("latitude", latitude);
                     driverID.put("street", street);
-                    data.put("driverID", driverID);
+                    data.put(driverUID, driverID);
                 }
                 res.put("data", data);
                 this.sendResponse(r,res,200);
@@ -70,6 +75,17 @@ public class Nearby extends Endpoint {
         } catch (Exception e){
             e.printStackTrace();
             this.sendStatus(r, 500);
+        }
+    }
+
+    @Override
+    public void handlePost(HttpExchange r) {
+        try {
+            this.dao.clearDatabase();
+            r.sendResponseHeaders(200, -1);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

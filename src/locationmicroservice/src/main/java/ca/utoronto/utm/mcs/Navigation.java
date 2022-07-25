@@ -30,8 +30,8 @@ public class Navigation extends Endpoint {
             this.sendStatus(r, 400);
             return;
         }
-        String driveruid = param[1];
-        params = param[0].split("=");
+        String driveruid = param[0];
+        params = param[1].split("=");
         if(params.length !=2 || params[1].isEmpty()) {
             this.sendStatus(r, 400);
             return;

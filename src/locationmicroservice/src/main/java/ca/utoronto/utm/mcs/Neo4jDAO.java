@@ -26,13 +26,15 @@ public class Neo4jDAO {
         if(!driver_loc.hasNext()){
             return driver_loc;
         }
-        String road1 = driver_loc.next().get("street").asString();
+        String road1 = driver_loc.next().get(2).asString();
         Result passenger_loc = getUserLocationByUid(passengeruid);
         if(!passenger_loc.hasNext()){
             return passenger_loc;
         }
-        String road2 = passenger_loc.next().get("street").asString();
-        String query = ("MATCH (start: road {name: '%s'}), (end: road {name: '%s'}) MATCH p=(start)-[*]->(end) WITH p, reduce(s = 0, r IN rels(p) | s + r.travel_time) AS dist RETURN p, dist ORDER BY dist asc limit 1");
+        String road2 = passenger_loc.next().get(2).asString();
+        System.out.println(road1);
+        System.out.println(road2);
+        String query = ("MATCH p=(a:road {name:'%s'})-[*]->(b:road {name:'%s'}), (WITH p, reduce(s = 0, r IN relationships(p) | s + r.travel_time) AS dist RETURN p, dist ORDER BY dist asc limit 1)");
         query = String.format(query, road1, road2);
         return this.session.run(query);
     }
@@ -112,13 +114,19 @@ public class Neo4jDAO {
         Result loc = getUserLocationByUid(uid);
         if(loc.hasNext()){
             Record record = loc.next();
-            Double latitude = record.get("latitude").asDouble();
-            Double longitude = record.get("longitude").asDouble();
-            String query = "WITH %f AS lat, %f AS lon MATCH(b: user) WHERE 2*6371.393*asin(sqrt(haversin(radians(lat-b.latitude))+ cos(radians(lat))*cos(radians(b.latitude))*haversin(radians(lon-b.longitude)))) < %f RETURN b)";
+            Double latitude = record.get(1).asDouble();
+            Double longitude = record.get(0).asDouble();
+            String query = "WITH %f AS lat, %f AS lon MATCH(b: user) WHERE 2*6371.393*asin(sqrt(haversin(radians(lat-b.latitude))+ cos(radians(lat))*cos(radians(b.latitude))*haversin(radians(lon-b.longitude)))) < %d RETURN b";
             query = String.format(query, latitude, longitude, radius);
             return this.session.run(query);
         } else{
             return loc;
         }
+    }
+
+    public int clearDatabase() {
+
+        this.session.run("MATCH (n) DETACH DELETE n");
+        return 200;
     }
 } 
