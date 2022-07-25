@@ -116,6 +116,7 @@ public class PostgresDAO {
 
     }
 
+
     public ResultSet getUsersFromUid(int uid) throws SQLException {
         String query = "SELECT * FROM users WHERE uid = %d";
         query = String.format(query, uid);
