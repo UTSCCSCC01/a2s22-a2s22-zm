@@ -34,7 +34,7 @@ public class Neo4jDAO {
         String road2 = passenger_loc.next().get(2).asString();
         System.out.println(road1);
         System.out.println(road2);
-        String query = ("MATCH p=(a:road {name:'%s'})-[*]->(b:road {name:'%s'}), (WITH p, reduce(s = 0, r IN relationships(p) | s + r.travel_time) AS dist RETURN p, dist ORDER BY dist asc limit 1)");
+        String query = ("MATCH (source:road {name: '%s'}), (target:road {name: '%s'}) CALL gds.shortestPath.dijkstra.stream('myGraph', {sourceNode: source, targetNode: target, relationshipWeightProperty: 'travel_time'})YIELD index, path RETURN nodes(path) as path ORDER BY index");
         query = String.format(query, road1, road2);
         return this.session.run(query);
     }
