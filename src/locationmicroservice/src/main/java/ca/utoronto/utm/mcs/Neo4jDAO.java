@@ -31,7 +31,7 @@ public class Neo4jDAO {
             return passenger_loc;
         }
         String road2 = passenger_loc.next().get("street").asString();
-        String query = ("MATCH p=shortestPath((b:road {name: '%s'})-[*]-(t:actor {id: '%s'})) RETURN nodes(p)");
+        String query = ("MATCH p=shortestPath((b:road {name: '%s'})-[*]-(t:road {id: '%s'})) RETURN nodes(p)");
         query = String.format(query, road1, road2);
         return this.session.run(query);
     }
