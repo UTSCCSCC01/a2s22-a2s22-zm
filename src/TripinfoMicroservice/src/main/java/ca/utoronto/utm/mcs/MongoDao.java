@@ -3,6 +3,7 @@ package ca.utoronto.utm.mcs;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 
 import io.github.cdimascio.dotenv.Dotenv;
@@ -44,9 +45,16 @@ public class MongoDao {
 			e.printStackTrace();
 		}
 		return null;
+	}
 
-
-
+	public int trip_update(String oid, int distance, int endTime, int timeElapsed, String totalCost) {
+		Document query = new Document("_id", oid);
+		MongoCursor<Document> mongoCursor = collection.find(query).iterator();
+		if(mongoCursor.hasNext()){
+			mongoCursor.next().append("distance", distance).append("totalCost", totalCost).append("endTime", endTime).append("timeElapsed", timeElapsed);
+			return 200;
+		}
+		return 404;
 	}
 
 }
