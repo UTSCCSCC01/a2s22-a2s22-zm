@@ -8,6 +8,12 @@ public class App {
     static int PORT = 8000;
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         HttpServer server = HttpServer.create(new InetSocketAddress("0.0.0.0", PORT), 0);
+        server.createContext("/trip/request", new Request());
+        server.createContext("/trip/confirm");
+        server.createContext("/trip/", new Trip());
+        server.createContext("/trip/passenger/", new Passenger());
+        server.createContext("/trip/driver/", new Driver());
+        server.createContext("/trip/driverTime/", new Drivetime());
 
         // TODO: Add server contexts here. Do not set executors for the server, you shouldn't need them.
 
