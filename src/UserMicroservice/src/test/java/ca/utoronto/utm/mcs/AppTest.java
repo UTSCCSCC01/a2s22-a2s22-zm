@@ -21,10 +21,13 @@ import java.net.http.HttpResponse;
 /**
  * Please write your tests in this class. 
  */
- 
+
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AppTest {
 
     private static final int PORT = 8000;
+    private static HttpServer server;
+
 
 
 
@@ -33,7 +36,7 @@ public class AppTest {
     @BeforeAll
     public static void startServer() throws IOException {
 
-        HttpServer server = HttpServer.create(new InetSocketAddress("0.0.0.0", PORT), 0);
+        server = HttpServer.create(new InetSocketAddress("0.0.0.0", PORT), 0);
         server.createContext("/user", new User());
         server.createContext("/user/register", new Register());
         server.createContext("/user/login", new Login());
@@ -42,6 +45,11 @@ public class AppTest {
 
         server.start();
         System.out.printf("Server started on port %d...\n", PORT);
+
+        httpRequest("POST", "/user/clear", "");
+        System.out.printf("Database cleared\n");
+
+
     }
 
     //Send a http request and get the http response.
@@ -69,7 +77,7 @@ public class AppTest {
 
     @Test
     @Order(1)
-    void addActorPass() {
+    void userRegisterPass() {
         try {
             JSONObject jsonObject1 = new JSONObject();
             jsonObject1.put("name", "Alexander Hamilton");
@@ -78,12 +86,85 @@ public class AppTest {
             HttpResponse<String> httpResponse1 = httpRequest("POST", "/user/register", jsonObject1.toString());
             assertEquals(200, httpResponse1.statusCode());
 
+            JSONObject jsonObject2 = new JSONObject();
+            jsonObject2.put("name", "Lewis Hamilton");
+            jsonObject2.put("email", "789@gmail.com");
+            jsonObject2.put("password", "123456");
+            HttpResponse<String> httpResponse2 = httpRequest("POST", "/user/register", jsonObject2.toString());
+            assertEquals(200, httpResponse2.statusCode());
 
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
+
+    @Test
+    @Order(2)
+    void userRegisterFail() {
+        try {
+            JSONObject jsonObject1 = new JSONObject();
+            jsonObject1.put("name", "Alexander Hamilton");
+            jsonObject1.put("password", "123456");
+            HttpResponse<String> httpResponse1 = httpRequest("POST", "/user/register", jsonObject1.toString());
+            assertEquals(400, httpResponse1.statusCode());
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    @Order(3)
+    void userLoginPass() {
+        try {
+            JSONObject jsonObject1 = new JSONObject();
+            jsonObject1.put("email", "456@gmail.com");
+            jsonObject1.put("password", "123456");
+            HttpResponse<String> httpResponse1 = httpRequest("POST", "/user/login", jsonObject1.toString());
+            assertEquals(200, httpResponse1.statusCode());
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    @Order(4)
+    void userLoginFail() {
+        try {
+            JSONObject jsonObject1 = new JSONObject();
+            jsonObject1.put("email", "456@gmail.com");
+            HttpResponse<String> httpResponse1 = httpRequest("POST", "/user/login", jsonObject1.toString());
+            assertEquals(400, httpResponse1.statusCode());
+
+            JSONObject jsonObject2 = new JSONObject();
+            jsonObject2.put("email", "4@gmail.com");
+            jsonObject2.put("password", "123456");
+            HttpResponse<String> httpResponse2 = httpRequest("POST", "/user/login", jsonObject2.toString());
+            assertEquals(404, httpResponse2.statusCode());
+
+            JSONObject jsonObject3 = new JSONObject();
+            jsonObject3.put("email", "456@gmail.com");
+            jsonObject3.put("password", "456");
+            HttpResponse<String> httpResponse3 = httpRequest("POST", "/user/login", jsonObject3.toString());
+            assertEquals(401, httpResponse3.statusCode());
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @AfterAll
+    public static void shutdownServer() {
+        httpRequest("POST", "/user/clear", "");
+        server.stop(0);
+    }
+
+
 
 
 }
