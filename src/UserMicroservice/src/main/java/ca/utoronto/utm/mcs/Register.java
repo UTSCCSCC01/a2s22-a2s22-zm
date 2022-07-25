@@ -48,8 +48,7 @@ public class Register extends Endpoint {
                     jsonObject.put("uid", uid);
                     this.sendResponse(r, jsonObject, 200);
                     return;
-                }
-                else{
+                } else{
                     this.sendStatus(r, user_register_res);
                 }
             }
