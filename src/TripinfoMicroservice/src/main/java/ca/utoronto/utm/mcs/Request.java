@@ -13,6 +13,8 @@ import java.net.URI;
 
 import com.sun.net.httpserver.HttpExchange;
 import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 
 public class Request extends Endpoint {
@@ -29,5 +31,12 @@ public class Request extends Endpoint {
     @Override
     public void handlePost(HttpExchange r) throws IOException,JSONException{
         // TODO
+        JSONObject body = new JSONObject(Utils.convert(r.getRequestBody()));
+        String fields[] = {"uid", "radius"};
+        Class<?> fieldClasses[] = {String.class, Integer.class};
+        if (!validateFields(body, fields, fieldClasses)) {
+            this.sendStatus(r, 400);
+            return;
+        }
     }
 }
