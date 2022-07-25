@@ -23,10 +23,13 @@ public class PostgresDAO {
 	}
 
 	// *** implement database operations here *** //
-
-    public int user_login(String email, String password){
+    //check the user's email and password
+    public JSONObject user_login(String email, String password){
+        int code;
+        String uid;
         String query;
         String old_password;
+        JSONObject jsonObject = new JSONObject();
         int count = 0;
         if (email != null) {
             query = "SELECT * FROM users WHERE email = %s";
@@ -37,21 +40,80 @@ public class PostgresDAO {
                 if(count == 1){
                     old_password = rs.getString("password");
                 } else if (count > 1) {
-                    return 500;
+                    code = 500;
+                    break;
                 }
             }
             if(count == 1){
                 if(old_password.equals(password)){
-                    return 200;
+                    code = 200;
+                    query = "SELECT * FROM users WHERE email = %s";
+                    query = String.format(query, email);
+                    ResultSet rs = this.st.executeQuery(query);
+                    uid = this.getString(uid);
                 }
                 else{
-                    return 401;
+                    code = 401;
                 }
+            }
+            else{
+                code = 404;
             }
         }
         else{
-            return 400;
+            code = 400;
         }
+        if(code == 200){
+            jsonObject.put("code", code);
+            jsonObject.put("uid", uid);
+        }
+        else{
+            jsonObject.put("code", code);
+        }
+        return jsonObject;
+    }
+    // check whether the user is able to register
+    public JSONObject user_register(String name, String email, String password){
+        int code;
+        String uid;
+        JSONObject jsonObject = new JSONObject();
+        String query;
+        if(email!=null){
+            query = "SELECT * FROM users WHERE email = %s";
+            query = String.format(query, email);
+            ResultSet rs = this.st.executeQuery(query);
+            if(rs.next()){
+                code = 409;
+            }
+            else{
+                //insert the new user into table
+                query = "INSERT INTO user (name = %s, email = %s, password = %s)";
+                query = String.format(query, name, email, password);
+                rs = this.st.executeQuery(query);
+                //find the new user's uid
+                query = "SELECT * FROM users WHERE email = %s";
+                query = String.format(query, email);
+                rs = this.st.executeQuery(query);
+                if(rs.next()){
+                    uid = rs.getString("uid");
+                    code = 200;
+                }
+                code = 409;
+            }
+        }
+        else {
+            code = 400;
+        }
+        //send the JSON package
+        if(code == 200){
+            jsonObject.put("code", code);
+            jsonObject.put("uid", uid);
+        }
+        else{
+            jsonObject.put("code", code);
+        }
+        return jsonObject;
+
     }
 
     public ResultSet getUsersFromUid(int uid) throws SQLException {
