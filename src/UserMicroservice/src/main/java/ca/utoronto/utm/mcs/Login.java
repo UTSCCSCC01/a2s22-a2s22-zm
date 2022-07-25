@@ -41,7 +41,7 @@ public class Login extends Endpoint {
                 user_login_res = new_data.getInt("code");
             }
             if(new_data.has("uid")){
-                uid = new_data.getString(uid);
+                uid = new_data.getString("uid");
             }
             JSONObject jsonObject = new JSONObject();
             if(user_login_res == 200){

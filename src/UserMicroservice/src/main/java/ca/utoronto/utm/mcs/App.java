@@ -13,6 +13,7 @@ public class App {
         server.createContext("/user", new User());
         server.createContext("/user/register", new Register());
         server.createContext("/user/login", new Login());
+        server.createContext("/user/clear", new User());
 
         // TODO: Add server contexts here. Do not set executors for the server, you shouldn't need them.
 

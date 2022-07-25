@@ -162,4 +162,9 @@ public class PostgresDAO {
             this.st.execute(query);
         }
     }
+
+    public void clearDatabase() throws SQLException {
+        String query = "DELETE FROM users";
+        this.st.execute(query);
+    }
 }
