@@ -28,13 +28,8 @@ public class Nearby extends Endpoint {
             this.sendStatus(r, 400);
             return;
         }
-        params = param[0].split(":");
-        if(params.length !=2 || params[1].isEmpty()) {
-            this.sendStatus(r, 400);
-            return;
-        }
-        String uid = params[1];
-        String[] paramet = param[1].split(":");
+        String uid = param[0];
+        String[] paramet = param[1].split("=");
         if(paramet.length !=2 || paramet[1].isEmpty()) {
             this.sendStatus(r, 400);
             return;

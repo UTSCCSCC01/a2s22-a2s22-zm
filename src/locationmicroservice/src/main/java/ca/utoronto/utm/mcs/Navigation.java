@@ -30,18 +30,15 @@ public class Navigation extends Endpoint {
             this.sendStatus(r, 400);
             return;
         }
-        params = param[0].split(":");
+        String driveruid = param[1];
+        params = param[0].split("=");
         if(params.length !=2 || params[1].isEmpty()) {
             this.sendStatus(r, 400);
             return;
         }
-        String driveruid = params[1];
-        String[] paramet = param[1].split(":");
-        if(paramet.length !=2 || paramet[1].isEmpty()) {
-            this.sendStatus(r, 400);
-            return;
-        }
-        String passengeruid = paramet[1];
+        String passengeruid = params[1];
+
+
         try{
             Result result = this.dao.getNavigation(driveruid,passengeruid);
             if(result.hasNext()){
