@@ -102,6 +102,12 @@ public class Neo4jDAO {
         return this.session.run(query);
     }
 
+    public Result findRoutetime(String roadname1, String roadname2){
+        String query = "MATCH (r1:road {name: '%s'}), (r2:road {name: '%s'}) MATCH (r1) -[r:ROUTE_TO]->(r2) RETURN r.travel_time";
+        query = String.format(query, roadname1, roadname2);
+        return this.session.run(query);
+    }
+
     public Result getNearby(String uid, int radius){
         Result loc = getUserLocationByUid(uid);
         if(loc.hasNext()){

@@ -6,6 +6,7 @@ import com.sun.net.httpserver.HttpExchange;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Record;
 
+
 public class Navigation extends Endpoint {
 
     /**
@@ -49,19 +50,51 @@ public class Navigation extends Endpoint {
                 int time;
                 int total_time=0;
                 String street;
-                JSONObject route = new JSONObject();
+                JSONArray route = new JSONArray();
+                JSONObject road;
                 JSONObject data = new JSONObject();
                 boolean has_traffic;
-                while(result.hasNext()){
-                    record = result.next();
-                    time = record.get("travel_time").asInt();
-                    total_time = total_time + time;
-                    has_traffic = record.get("has_traffic").asBoolean();
-                    street = record.get("name").asString();
-                    route.put("time", time);
-                    route.put("has_traffic", has_traffic);
-                    route.put("street", street);
+//                while(result.hasNext()){
+//                    record = result.next();
+//                    time = record.get("travel_time").asInt();
+//                    total_time = total_time + time;
+//                    has_traffic = record.get("has_traffic").asBoolean();
+//                    street = record.get("name").asString();
+//                    route.put("time", time);
+//                    route.put("has_traffic", has_traffic);
+//                    route.put("street", street);
+//                }
+
+                Record travel_time;
+                record = result.single();
+                int i=0;
+                Record destination = this.dao.getUserLocationByUid(passengeruid).next();
+                while(!record.get(0).get(i).get("name").asString().equals(destination.get("street").asString())){
+                    road = new JSONObject();
+                    street = record.get(0).get(i).get("name").asString();
+                    road.put("street", street );
+                    has_traffic = record.get(0).get(i).get("has_traffic").asBoolean();
+                    road.put("has_traffic",has_traffic);
+                    if(i==0){
+                        road.put("time", 0);
+                    } else{
+                        travel_time = this.dao.findRoutetime(record.get(0).get(i-1).get("name").asString(),street).next();
+                        time =  travel_time.get("travel_time").asInt();
+                        road.put("time", time);
+                        total_time = total_time + time;
+                    }
+                    i++;
+                    route.put(road);
                 }
+                road = new JSONObject();
+                road.put("street", record.get(0).get(i).get("name") );
+                road.put("has_traffic",record.get(0).get(i).get("has_traffic"));
+                travel_time = this.dao.findRoutetime(record.get(0).get(i-1).get("name").asString(), record.get(0).get(i).get("name").asString()).next();
+                time =  travel_time.get("travel_time").asInt();
+                road.put("time", time);
+                total_time = total_time + time;
+                route.put(road);
+
                 data.put("route", route);
                 data.put("total_time", total_time);
                 res.put("data", data);
