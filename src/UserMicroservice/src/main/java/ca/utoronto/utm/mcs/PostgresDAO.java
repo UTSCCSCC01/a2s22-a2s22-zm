@@ -92,7 +92,7 @@ public class PostgresDAO {
             }
             else{
                 //insert the new user into table
-                query = "INSERT INTO user (name = %s, email = %s, password = %s)";
+                query = "INSERT INTO users (name = %s, email = %s, password = %s)";
                 query = String.format(query, name, email, password);
                 rs = this.st.executeQuery(query);
                 //find the new user's uid
