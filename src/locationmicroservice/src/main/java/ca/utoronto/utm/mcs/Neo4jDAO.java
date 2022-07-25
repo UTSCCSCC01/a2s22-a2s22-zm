@@ -20,7 +20,21 @@ public class Neo4jDAO {
     }
 
     // *** implement database operations here *** //
-
+    public Result getNavigation(String driveruid, String passengeruid){
+        Result driver_loc = getUserLocationByUid(driveruid);
+        if(!driver_loc.hasNext()){
+            return driver_loc;
+        }
+        String road1 = driver_loc.next().get("street").asString();
+        Result passenger_loc = getUserLocationByUid(passengeruid);
+        if(!passenger_loc.hasNext()){
+            return passenger_loc;
+        }
+        String road2 = passenger_loc.next().get("street").asString();
+        String query = ("MATCH p=shortestPath((b:road {name: '%s'})-[*]-(t:actor {id: '%s'})) RETURN nodes(p)");
+        query = String.format(query, road1, road2);
+        return this.session.run(query);
+    }
     public Result addUser(String uid, boolean is_driver) {
         String query = "CREATE (n: user {uid: '%s', is_driver: %b, longitude: 0, latitude: 0, street: ''}) RETURN n";
         query = String.format(query, uid, is_driver);
