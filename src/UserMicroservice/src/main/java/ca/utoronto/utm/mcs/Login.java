@@ -2,6 +2,8 @@ package ca.utoronto.utm.mcs;
 
 import com.sun.net.httpserver.HttpExchange;
 import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 
 public class Login extends Endpoint {
@@ -14,9 +16,10 @@ public class Login extends Endpoint {
      * information of the user in the database.
      */
     
-    public void user_login(HttpExchange r, JSONObject deserialized){
+    public void user_login(HttpExchange r, JSONObject deserialized) throws JSONException, IOException {
         String email, password;
-        int user_login_res;
+        int user_login_res = 0;
+        String uid = "";
         try{
             if(deserialized.has("email") && deserialized.has("password")){
                 //check whether the user exists
@@ -61,14 +64,12 @@ public class Login extends Endpoint {
         // TODO
         String body = Utils.convert(r.getRequestBody());
         String path = r.getRequestURI().getPath();
-        int api_response;
         try{
-            JSONObject deserailized = new JSONObject(body);
+            JSONObject deserialized = new JSONObject(body);
             switch(path){
                 //distinguish the path
                 case "/api/user/login":
-                    api_response = this.user_login(deserailized);
-                    sendStatus(r,api_response);
+                    this.user_login(r, deserialized);
                     break;
             }
         } catch (Exception e) {

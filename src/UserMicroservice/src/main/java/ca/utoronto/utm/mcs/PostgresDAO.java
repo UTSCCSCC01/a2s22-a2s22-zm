@@ -2,6 +2,8 @@ package ca.utoronto.utm.mcs;
 
 import java.sql.*;
 import io.github.cdimascio.dotenv.Dotenv;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class PostgresDAO {
 	
@@ -24,11 +26,11 @@ public class PostgresDAO {
 
 	// *** implement database operations here *** //
     //check the user's email and password
-    public JSONObject user_login(String email, String password){
+    public JSONObject user_login(String email, String password) throws SQLException, JSONException {
         int code;
-        String uid;
+        String uid = "";
         String query;
-        String old_password;
+        String old_password = "";
         JSONObject jsonObject = new JSONObject();
         int count = 0;
         if (email != null) {
@@ -49,8 +51,11 @@ public class PostgresDAO {
                     code = 200;
                     query = "SELECT * FROM users WHERE email = %s";
                     query = String.format(query, email);
-                    ResultSet rs = this.st.executeQuery(query);
-                    uid = this.getString(uid);
+                    rs = this.st.executeQuery(query);
+                    if(rs.next()){
+                        uid = rs.getString("uid");
+                    }
+
                 }
                 else{
                     code = 401;
@@ -73,9 +78,9 @@ public class PostgresDAO {
         return jsonObject;
     }
     // check whether the user is able to register
-    public JSONObject user_register(String name, String email, String password){
+    public JSONObject user_register(String name, String email, String password) throws SQLException, JSONException {
         int code;
-        String uid;
+        String uid = "";
         JSONObject jsonObject = new JSONObject();
         String query;
         if(email!=null){

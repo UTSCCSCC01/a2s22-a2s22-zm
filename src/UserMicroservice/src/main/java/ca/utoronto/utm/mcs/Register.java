@@ -2,6 +2,8 @@ package ca.utoronto.utm.mcs;
 
 import com.sun.net.httpserver.HttpExchange;
 import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 
 public class Register extends Endpoint {
@@ -14,12 +16,12 @@ public class Register extends Endpoint {
      */
 
     //register a user
-    public void user_register(HttpExchange r, JSONObject deserialized){
+    public void user_register(HttpExchange r, JSONObject deserialized) throws JSONException, IOException {
         String name, email, password;
-        int user_register_res;
-        String uid;
+        int user_register_res = 500;
+        String uid = "";
         try{
-            if(deserialized.has("name") && && deserialized.has("email") && deserialized.has("password")){
+            if(deserialized.has("name") && deserialized.has("email") && deserialized.has("password")){
                 //check whether it is a bad request
                 name = deserialized.getString("name");
                 email = deserialized.getString("email");
@@ -43,7 +45,7 @@ public class Register extends Endpoint {
                 if(new_data.has("uid")){
                     uid = new_data.getString("uid");
                 }
-                JSONobject jsonObject = new JSONObject();
+                JSONObject jsonObject = new JSONObject();
                 if(user_register_res == 200){
                     jsonObject.put("uid", uid);
                     this.sendResponse(r, jsonObject, 200);
@@ -51,6 +53,10 @@ public class Register extends Endpoint {
                 } else{
                     this.sendStatus(r, user_register_res);
                 }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         } catch (Exception e){
             e.printStackTrace();
@@ -62,14 +68,14 @@ public class Register extends Endpoint {
     @Override
     public void handlePost(HttpExchange r) throws IOException, JSONException {
         // TODO
-        String body = Utils.conver(r.getRequestBody());
+        String body = Utils.convert(r.getRequestBody());
         String path = r.getRequestURI().getPath();
         try{
-            JSONObject deserailized = new JSONObject(body);
+            JSONObject deserialized = new JSONObject(body);
             switch (path){
                 //distinguish the path
                 case "/api/user/register":
-                    this.user_register(r,deserailized);
+                    this.user_register(r,deserialized);
                     break;
             }
         } catch (Exception e){
