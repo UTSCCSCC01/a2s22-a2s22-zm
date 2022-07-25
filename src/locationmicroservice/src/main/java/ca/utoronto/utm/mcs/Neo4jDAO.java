@@ -2,6 +2,7 @@ package ca.utoronto.utm.mcs;
 
 import org.neo4j.driver.*;
 import io.github.cdimascio.dotenv.Dotenv;
+import org.neo4j.driver.Record;
 
 public class Neo4jDAO {
 
@@ -31,7 +32,7 @@ public class Neo4jDAO {
             return passenger_loc;
         }
         String road2 = passenger_loc.next().get("street").asString();
-        String query = ("MATCH p=shortestPath((b:road {name: '%s'})-[*]-(t:road {id: '%s'})) RETURN nodes(p)");
+        String query = ("MATCH (start: road {name: '%s'}), (end: road {name: '%s'}) MATCH p=(start)-[*]->(end) WITH p, reduce(s = 0, r IN rels(p) | s + r.travel_time) AS dist RETURN p, dist ORDER BY dist asc limit 1");
         query = String.format(query, road1, road2);
         return this.session.run(query);
     }
@@ -99,5 +100,19 @@ public class Neo4jDAO {
         String query = "MATCH (r1:road {name: '%s'})-[r:ROUTE_TO]->(r2:road {name: '%s'}) DELETE r RETURN COUNT(r) AS numDeletedRoutes";
         query = String.format(query, roadname1, roadname2);
         return this.session.run(query);
+    }
+
+    public Result getNearby(String uid, int radius){
+        Result loc = getUserLocationByUid(uid);
+        if(loc.hasNext()){
+            Record record = loc.next();
+            Double latitude = record.get("latitude").asDouble();
+            Double longitude = record.get("longitude").asDouble();
+            String query = "WITH %f AS lat, %f AS lon MATCH(b: user) WHERE 2*6371*asin(sqrt(haversin(radians(lat-b.latitude))+ cos(radians(lat))*cos(radians(b.latitude))*haversin(radians(lon-b.longitude)))) < %f RETURN b)";
+            query = String.format(query, latitude, longitude, radius);
+            return this.session.run(query);
+        } else{
+            return loc;
+        }
     }
 } 
