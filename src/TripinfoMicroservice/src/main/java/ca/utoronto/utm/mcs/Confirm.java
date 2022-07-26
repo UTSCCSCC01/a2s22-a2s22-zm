@@ -42,7 +42,7 @@ public class Confirm extends Endpoint {
             if(deserialized.has("driver") && deserialized.has("passenger") && deserialized.has("startTime")){
                 driveruid = deserialized.getString("driver");
                 passengeruid = deserialized.getString("passenger");
-                starttime = deserialized.getInt("starTime");
+                starttime = deserialized.getInt("startTime");
                 try{
                     JSONObject new_data = this.dao.trip_confirm(driveruid, passengeruid, starttime);
                     JSONObject t_id = new JSONObject();
@@ -54,6 +54,8 @@ public class Confirm extends Endpoint {
                     e.printStackTrace();
                     this.sendStatus(r,500);
                 }
+            }else{
+                this.sendStatus(r,400);
             }
         } catch(Exception e){
             e.printStackTrace();
