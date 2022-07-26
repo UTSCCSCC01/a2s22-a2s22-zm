@@ -21,7 +21,7 @@ import java.io.IOException;
 
 public class Request extends Endpoint {
     static int PORT = 8000;
-    static final String LOCATION_SERVICE = "src_locationmicroservice";
+    static final String LOCATION_SERVICE = "locationmicroservice";
 
     /**
      * POST /trip/request
@@ -77,5 +77,11 @@ public class Request extends Endpoint {
         OutputStream os= r.getResponseBody();
         os.write(httpResponse.body().getBytes());
         os.close();
+    }
+
+    @Override
+    public void handleDelete(HttpExchange r) throws IOException {
+        this.dao.clearDatabase();
+        r.sendResponseHeaders(200, -1);
     }
 }

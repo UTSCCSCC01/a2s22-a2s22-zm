@@ -1,6 +1,7 @@
 package ca.utoronto.utm.mcs;
 
-import com.mongodb.MongoClient;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 
 import com.mongodb.client.MongoCursor;
@@ -28,7 +29,7 @@ public class MongoDao {
         // Use Dotenv like in the DAOs of the other microservices.
 		Dotenv dotenv = Dotenv.load();
 		String addr = dotenv.get("MONGODB_ADDR");
-		MongoClient mongoClient = new MongoClient("mongodb://root:123456@" + addr + ":27017");
+		MongoClient mongoClient = MongoClients.create("mongodb://root:123456@" + addr + ":27017");
 		MongoDatabase mongoDatabase = mongoClient.getDatabase("trip");
 		this.collection = mongoDatabase.getCollection("trips");
 	}
@@ -120,6 +121,10 @@ public class MongoDao {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public void clearDatabase() {
+		collection.deleteMany(new Document());
 	}
 
 

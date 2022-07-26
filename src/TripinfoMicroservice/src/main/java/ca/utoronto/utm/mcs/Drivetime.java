@@ -22,7 +22,7 @@ import static ca.utoronto.utm.mcs.Request.httpRequest;
 
 public class Drivetime extends Endpoint {
 
-    static final String LOCATION_SERVICE = "src_locationmicroservice";
+    static final String LOCATION_SERVICE = "locationmicroservice";
 
     /**
      * GET /trip/driverTime/:_id
