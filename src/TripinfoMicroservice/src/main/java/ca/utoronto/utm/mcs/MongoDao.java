@@ -55,7 +55,8 @@ public class MongoDao {
 	}
 
 	public int trip_update(String oid, int distance, int endTime, int timeElapsed, String totalCost) {
-		Document query = new Document("_id", oid);
+		ObjectId objectId = new ObjectId(oid);
+		Document query = new Document("_id", objectId);
 		MongoCursor<Document> mongoCursor = collection.find(query).iterator();
 		if(mongoCursor.hasNext()){
 			mongoCursor.next().append("distance", distance).append("totalCost", totalCost).append("endTime", endTime).append("timeElapsed", timeElapsed);
@@ -74,7 +75,9 @@ public class MongoDao {
 				return new JSONObject();
 			}
 			while(mongoCursor.hasNext()){
-				jsonArray.put(new JSONObject(mongoCursor.next().toJson()));
+				JSONObject jsonObject = new JSONObject(mongoCursor.next().toJson());
+				jsonObject.put("_id", jsonObject.getJSONObject("_id").getString("$oid"));
+				jsonArray.put(jsonObject);
 			}
 			JSONObject jsonObject = new JSONObject();
 			jsonObject.put("trips", jsonArray);
@@ -96,7 +99,9 @@ public class MongoDao {
 				return new JSONObject();
 			}
 			while(mongoCursor.hasNext()){
-				jsonArray.put(new JSONObject(mongoCursor.next().toJson()));
+				JSONObject jsonObject = new JSONObject(mongoCursor.next().toJson());
+				jsonObject.put("_id", jsonObject.getJSONObject("_id").getString("$oid"));
+				jsonArray.put(jsonObject);
 			}
 			JSONObject jsonObject = new JSONObject();
 			jsonObject.put("trips", jsonArray);

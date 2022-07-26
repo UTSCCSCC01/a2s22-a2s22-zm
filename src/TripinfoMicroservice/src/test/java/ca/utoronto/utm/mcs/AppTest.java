@@ -117,18 +117,88 @@ public class AppTest {
     void UpdateTripPass() {
         try {
             JSONObject jsonObject1 = new JSONObject();
-            jsonObject1.put("distance", "2");
-            jsonObject1.put("endTime", "123458");
-            jsonObject1.put("timeElapsed", "2");
+            jsonObject1.put("distance", 2);
+            jsonObject1.put("endTime", 123458);
+            jsonObject1.put("timeElapsed", 2);
             jsonObject1.put("totalCost", "120");
             HttpResponse<String> httpResponse1 = httpRequest("PATCH", "/trip/" + id, jsonObject1.toString());
             assertEquals(200, httpResponse1.statusCode());
 
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
+    @Test
+    @Order(4)
+    void UpdateTripFail() {
+        try {
+            JSONObject jsonObject2 = new JSONObject();
+            jsonObject2.put("distance", 2);
+            jsonObject2.put("endTime", 123458);
+            jsonObject2.put("timeElapsed", 2);
+            HttpResponse<String> httpResponse2 = httpRequest("PATCH", "/trip/12", jsonObject2.toString());
+            assertEquals(400, httpResponse2.statusCode());
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    @Order(5)
+    void PassengerTripsPass() {
+        try {
+
+            HttpResponse<String> httpResponse1 = httpRequest("GET", "/trip/passenger/1", "");
+            assertEquals(200, httpResponse1.statusCode());
+            JSONObject jsonResponse = new JSONObject(httpResponse1.body());
+            assertEquals(id, jsonResponse.getJSONObject("data").getJSONArray("trips").getJSONObject(0).getString("_id"));
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    @Order(6)
+    void PassengerTripsFail() {
+
+
+            HttpResponse<String> httpResponse1 = httpRequest("GET", "/trip/passenger/8", "");
+            assertEquals(404, httpResponse1.statusCode());
+
+            HttpResponse<String> httpResponse2 = httpRequest("GET", "/trip/passenger/", "");
+            assertEquals(400, httpResponse2.statusCode());
+
+    }
+
+    @Test
+    @Order(7)
+    void DriverTripsPass() {
+        try {
+
+            HttpResponse<String> httpResponse1 = httpRequest("GET", "/trip/driver/2", "");
+            assertEquals(200, httpResponse1.statusCode());
+            JSONObject jsonResponse = new JSONObject(httpResponse1.body());
+            assertEquals(id, jsonResponse.getJSONObject("data").getJSONArray("trips").getJSONObject(0).getString("_id"));
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    @Order(8)
+    void DriverTripsFail() {
+
+
+        HttpResponse<String> httpResponse1 = httpRequest("GET", "/trip/driver/8", "");
+        assertEquals(404, httpResponse1.statusCode());
+
+        HttpResponse<String> httpResponse2 = httpRequest("GET", "/trip/driver/", "");
+        assertEquals(400, httpResponse2.statusCode());
+
     }
 
     @AfterAll
