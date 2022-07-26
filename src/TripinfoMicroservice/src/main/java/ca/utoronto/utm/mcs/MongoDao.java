@@ -6,9 +6,12 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 
+import com.mongodb.client.model.Projections;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -55,6 +58,28 @@ public class MongoDao {
 			return 200;
 		}
 		return 404;
+	}
+
+	public JSONObject trip_passenger(String uid) {
+		try {
+			JSONArray jsonArray = new JSONArray();
+			Document query = new Document("passenger", uid);
+			Bson projection = Projections.fields(Projections.exclude("passenger"));
+			MongoCursor<Document> mongoCursor = collection.find(query).projection(projection).iterator();
+			if(!mongoCursor.hasNext()) {
+				return new JSONObject();
+			}
+			while(mongoCursor.hasNext()){
+				jsonArray.put(new JSONObject(mongoCursor.next().toJson()));
+			}
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("trips", jsonArray);
+			return jsonObject;
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return null;
+
 	}
 
 }
