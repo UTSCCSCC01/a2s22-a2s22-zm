@@ -53,7 +53,7 @@ public class Drivetime extends Endpoint {
                 return;
             }
             String driveruid = new_data.getString("driver");
-            String passengeruid = new_data.getString("passenger")
+            String passengeruid = new_data.getString("passenger");
             HttpResponse<String> httpResponse = httpRequest("GET", LOCATION_SERVICE, "/location/navigation/" + driveruid + "?passengerUid=" + passengeruid, "");
             JSONObject content = new JSONObject(httpResponse.body());
             int time = content.getJSONObject("data").getInt("total_time");
