@@ -7,6 +7,7 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 
 import com.mongodb.client.model.Projections;
+import com.mongodb.util.JSON;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -14,6 +15,8 @@ import org.bson.types.ObjectId;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import javax.print.Doc;
 
 public class MongoDao {
 	
@@ -103,6 +106,24 @@ public class MongoDao {
 		return null;
 
 	}
+
+	public JSONObject trip_drivertime(String oid) {
+		try {
+			Document query = new Document("_id", oid);
+			Bson projection = Projections.fields(Projections.include("driver", "passenger"));
+			MongoCursor<Document> mongoCursor = collection.find(query).projection(projection).iterator();
+			if(!mongoCursor.hasNext()) {
+				return new JSONObject();
+			}
+			return new JSONObject(mongoCursor.next().toJson());
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+
+
 	
 
 }
