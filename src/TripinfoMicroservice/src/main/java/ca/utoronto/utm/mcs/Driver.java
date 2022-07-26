@@ -23,11 +23,6 @@ public class Driver extends Endpoint {
             return;
         }
         String uid = params[3];
-        JSONObject body = new JSONObject(Utils.convert(r.getRequestBody()));
-        if(body.length()!=0){
-            this.sendStatus(r, 400);
-            return;
-        }
         try {
             JSONObject new_data;
             JSONObject res = new JSONObject();
