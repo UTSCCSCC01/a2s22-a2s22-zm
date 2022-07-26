@@ -82,4 +82,27 @@ public class MongoDao {
 
 	}
 
+	public JSONObject trip_driver(String uid) {
+		try {
+			JSONArray jsonArray = new JSONArray();
+			Document query = new Document("driver", uid);
+			Bson projection = Projections.fields(Projections.exclude("driver"));
+			MongoCursor<Document> mongoCursor = collection.find(query).projection(projection).iterator();
+			if(!mongoCursor.hasNext()) {
+				return new JSONObject();
+			}
+			while(mongoCursor.hasNext()){
+				jsonArray.put(new JSONObject(mongoCursor.next().toJson()));
+			}
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("trips", jsonArray);
+			return jsonObject;
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+	
+
 }
