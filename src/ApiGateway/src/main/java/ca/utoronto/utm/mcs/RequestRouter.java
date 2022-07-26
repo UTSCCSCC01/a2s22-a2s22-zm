@@ -22,9 +22,9 @@ import java.io.OutputStream;    // Also given to you to send back your response
 
 public class RequestRouter implements HttpHandler {
 	static final int PORT = 8000;
-	static final String LOCATION_SERVICE = "";
-	static final String TRIP_SERVICE = "";
-	static final String USER_SERVICE = "";
+	static final String LOCATION_SERVICE = "src_locationmicroservice";
+	static final String TRIP_SERVICE = "src_tripinfomicroservice";
+	static final String USER_SERVICE = "src_usermicroservice";
 	HttpResponse<String> httpResponse;
 
     /**
