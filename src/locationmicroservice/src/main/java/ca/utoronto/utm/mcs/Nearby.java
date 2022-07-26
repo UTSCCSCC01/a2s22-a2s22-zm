@@ -42,6 +42,11 @@ public class Nearby extends Endpoint {
             this.sendStatus(r, 400);
             return;
         }
+        JSONObject body = new JSONObject(Utils.convert(r.getRequestBody()));
+        if(body.length()!=0){
+            this.sendStatus(r, 400);
+            return;
+        }
         try{
             Result result = this.dao.getNearby(uid,radius);
             if(result.hasNext()){
