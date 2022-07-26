@@ -33,6 +33,7 @@ public class AppTest {
 
 
     //Start the backend server. Run at the beginning of every single test method.
+    /*
     @BeforeAll
     public static void startServer() throws IOException {
 
@@ -51,6 +52,7 @@ public class AppTest {
 
 
     }
+    */
 
     //Send a http request and get the http response.
     public static HttpResponse httpRequest(String method, String endpoint, String body) {
@@ -158,11 +160,13 @@ public class AppTest {
         }
     }
 
+    /*
     @AfterAll
     public static void shutdownServer() {
         httpRequest("POST", "/user/clear", "");
         server.stop(0);
     }
+    */
 
 
 
