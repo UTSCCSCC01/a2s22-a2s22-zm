@@ -66,7 +66,7 @@ public class Navigation extends Endpoint {
                 record = result.single();
                 int i=0;
                 Record destination = this.dao.getUserLocationByUid(passengeruid).next();
-                while(!record.get(0).get(i).get("name").asString().equals(destination.get("street").asString())){
+                while(!record.get(0).get(i).get("name").asString().equals(destination.get(2).asString())){
                     road = new JSONObject();
                     street = record.get(0).get(i).get("name").asString();
                     road.put("street", street );
@@ -76,7 +76,7 @@ public class Navigation extends Endpoint {
                         road.put("time", 0);
                     } else{
                         travel_time = this.dao.findRoutetime(record.get(0).get(i-1).get("name").asString(),street).next();
-                        time =  travel_time.get("travel_time").asInt();
+                        time =  travel_time.get(0).asInt();
                         road.put("time", time);
                         total_time = total_time + time;
                     }
@@ -84,10 +84,10 @@ public class Navigation extends Endpoint {
                     route.put(road);
                 }
                 road = new JSONObject();
-                road.put("street", record.get(0).get(i).get("name") );
+                road.put("street", record.get(0).get(i).get("name").asString() );
                 road.put("has_traffic",record.get(0).get(i).get("has_traffic"));
                 travel_time = this.dao.findRoutetime(record.get(0).get(i-1).get("name").asString(), record.get(0).get(i).get("name").asString()).next();
-                time =  travel_time.get("travel_time").asInt();
+                time =  travel_time.get(0).asInt();
                 road.put("time", time);
                 total_time = total_time + time;
                 route.put(road);

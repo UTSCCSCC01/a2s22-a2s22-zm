@@ -29,7 +29,7 @@ public class AppTest {
     private static HttpServer server;
     private static String id;
 
-
+/*
     @BeforeAll
     public static void startServer() throws IOException {
 
@@ -52,7 +52,7 @@ public class AppTest {
 
 
     }
-
+*/
     //Send a http request and get the http response.
     public static HttpResponse httpRequest(String method, String endpoint, String body) {
         try {
@@ -200,11 +200,11 @@ public class AppTest {
         assertEquals(400, httpResponse2.statusCode());
 
     }
-
+/*
     @AfterAll
     public static void shutdownServer() {
 
         server.stop(0);
     }
-
+*/
 }

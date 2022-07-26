@@ -28,7 +28,7 @@ public class AppTest {
     private static final int PORT = 8000;
     private static HttpServer server;
 
-/*
+
     //Start the backend server. Run at the beginning of every single test method.
     @BeforeAll
     public static void startServer() throws IOException {
@@ -53,7 +53,7 @@ public class AppTest {
 
 
     }
-*/
+
     //Send a http request and get the http response.
     public static HttpResponse httpRequest(String method, String endpoint, String body) {
         try {
@@ -130,6 +130,43 @@ public class AppTest {
             jsonObject7.put("time", 5);
             HttpResponse<String> httpResponse7 = httpRequest("POST", "/location/hasRoute", jsonObject7.toString());
 
+            JSONObject jsonObject9 = new JSONObject();
+            jsonObject6.put("roadName", "Borough");
+            jsonObject6.put("hasTraffic", true);
+            HttpResponse<String> httpResponse9 = httpRequest("PUT", "/location/road", jsonObject9.toString());;
+
+            JSONObject jsonObject10 = new JSONObject();
+            jsonObject6.put("roadName", "Town Center");
+            jsonObject6.put("hasTraffic", true);
+            HttpResponse<String> httpResponse10 = httpRequest("PUT", "/location/road", jsonObject10.toString());;
+
+            JSONObject jsonObject11 = new JSONObject();
+            jsonObject7.put("roadName1", "Ellesmere");
+            jsonObject7.put("roadName2", "Borough");
+            jsonObject7.put("hasTraffic", false);
+            jsonObject7.put("time", 2);
+            HttpResponse<String> httpResponse11 = httpRequest("POST", "/location/hasRoute", jsonObject11.toString());
+
+            JSONObject jsonObject12 = new JSONObject();
+            jsonObject7.put("roadName1", "Borough");
+            jsonObject7.put("roadName2", "Town center");
+            jsonObject7.put("hasTraffic", false);
+            jsonObject7.put("time", 1);
+            HttpResponse<String> httpResponse12 = httpRequest("POST", "/location/hasRoute", jsonObject12.toString());
+
+            JSONObject jsonObject13 = new JSONObject();
+            jsonObject7.put("roadName1", "Borough");
+            jsonObject7.put("roadName2", "Omni");
+            jsonObject7.put("hasTraffic", false);
+            jsonObject7.put("time", 1);
+            HttpResponse<String> httpResponse13 = httpRequest("POST", "/location/hasRoute", jsonObject13.toString());
+
+            JSONObject jsonObject14 = new JSONObject();
+            jsonObject7.put("roadName1", "Borough");
+            jsonObject7.put("roadName2", "Omni");
+            jsonObject7.put("hasTraffic", false);
+            jsonObject7.put("time", 3);
+            HttpResponse<String> httpResponse14 = httpRequest("POST", "/location/hasRoute", jsonObject14.toString());
 
             HttpResponse<String> httpResponse8 = httpRequest("GET", "/location/nearbyDriver/1?radius=100", "");
             assertEquals(200, httpResponse8.statusCode());
@@ -161,7 +198,10 @@ public class AppTest {
             HttpResponse<String> httpResponse1 = httpRequest("GET", "/location/navigation/2?passengerUid=1", "");
             assertEquals(200, httpResponse1.statusCode());
             JSONObject jsonResponse = new JSONObject(httpResponse1.body());
-            assertEquals("Omni", jsonResponse.getJSONObject("data").getJSONArray("route").getJSONObject(0).getString("street"));
+            System.out.println(jsonResponse);
+            assertEquals("Ellesmere", jsonResponse.getJSONObject("data").getJSONArray("route").getJSONObject(0).getString("street"));
+            assertEquals("Borough", jsonResponse.getJSONObject("data").getJSONArray("route").getJSONObject(1).getString("street"));
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -179,12 +219,12 @@ public class AppTest {
     }
 
 
-/*
+
     @AfterAll
     public static void shutdownServer() {
 
         server.stop(0);
     }
-*/
+
 
 }
