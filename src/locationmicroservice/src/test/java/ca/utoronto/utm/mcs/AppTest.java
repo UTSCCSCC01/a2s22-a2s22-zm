@@ -131,41 +131,41 @@ public class AppTest {
             HttpResponse<String> httpResponse7 = httpRequest("POST", "/location/hasRoute", jsonObject7.toString());
 
             JSONObject jsonObject9 = new JSONObject();
-            jsonObject6.put("roadName", "Borough");
-            jsonObject6.put("hasTraffic", true);
+            jsonObject9.put("roadName", "Borough");
+            jsonObject9.put("hasTraffic", true);
             HttpResponse<String> httpResponse9 = httpRequest("PUT", "/location/road", jsonObject9.toString());;
 
             JSONObject jsonObject10 = new JSONObject();
-            jsonObject6.put("roadName", "Town Center");
-            jsonObject6.put("hasTraffic", true);
+            jsonObject10.put("roadName", "Town Center");
+            jsonObject10.put("hasTraffic", true);
             HttpResponse<String> httpResponse10 = httpRequest("PUT", "/location/road", jsonObject10.toString());;
 
             JSONObject jsonObject11 = new JSONObject();
-            jsonObject7.put("roadName1", "Ellesmere");
-            jsonObject7.put("roadName2", "Borough");
-            jsonObject7.put("hasTraffic", false);
-            jsonObject7.put("time", 2);
+            jsonObject11.put("roadName1", "Ellesmere");
+            jsonObject11.put("roadName2", "Borough");
+            jsonObject11.put("hasTraffic", false);
+            jsonObject11.put("time", 2);
             HttpResponse<String> httpResponse11 = httpRequest("POST", "/location/hasRoute", jsonObject11.toString());
 
             JSONObject jsonObject12 = new JSONObject();
-            jsonObject7.put("roadName1", "Borough");
-            jsonObject7.put("roadName2", "Town center");
-            jsonObject7.put("hasTraffic", false);
-            jsonObject7.put("time", 1);
+            jsonObject12.put("roadName1", "Borough");
+            jsonObject12.put("roadName2", "Town center");
+            jsonObject12.put("hasTraffic", false);
+            jsonObject12.put("time", 1);
             HttpResponse<String> httpResponse12 = httpRequest("POST", "/location/hasRoute", jsonObject12.toString());
 
             JSONObject jsonObject13 = new JSONObject();
-            jsonObject7.put("roadName1", "Borough");
-            jsonObject7.put("roadName2", "Omni");
-            jsonObject7.put("hasTraffic", false);
-            jsonObject7.put("time", 1);
+            jsonObject13.put("roadName1", "Borough");
+            jsonObject13.put("roadName2", "Omni");
+            jsonObject13.put("hasTraffic", false);
+            jsonObject13.put("time", 1);
             HttpResponse<String> httpResponse13 = httpRequest("POST", "/location/hasRoute", jsonObject13.toString());
 
             JSONObject jsonObject14 = new JSONObject();
-            jsonObject7.put("roadName1", "Borough");
-            jsonObject7.put("roadName2", "Omni");
-            jsonObject7.put("hasTraffic", false);
-            jsonObject7.put("time", 3);
+            jsonObject14.put("roadName1", "Borough");
+            jsonObject14.put("roadName2", "Omni");
+            jsonObject14.put("hasTraffic", false);
+            jsonObject14.put("time", 3);
             HttpResponse<String> httpResponse14 = httpRequest("POST", "/location/hasRoute", jsonObject14.toString());
 
             HttpResponse<String> httpResponse8 = httpRequest("GET", "/location/nearbyDriver/1?radius=100", "");
