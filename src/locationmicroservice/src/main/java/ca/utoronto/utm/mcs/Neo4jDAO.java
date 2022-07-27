@@ -115,7 +115,7 @@ public class Neo4jDAO {
             Record record = loc.next();
             Double latitude = record.get(1).asDouble();
             Double longitude = record.get(0).asDouble();
-            String query = "WITH %f AS lat, %f AS lon MATCH(b: user) WHERE 2*6371.393*asin(sqrt(haversin(radians(lat-b.latitude))+ cos(radians(lat))*cos(radians(b.latitude))*haversin(radians(lon-b.longitude)))) < %d RETURN b";
+            String query = "WITH %f AS lat, %f AS lon MATCH(b: user) WHERE 2*6378.137*asin(sqrt(haversin(radians(lat-b.latitude))+ cos(radians(lat))*cos(radians(b.latitude))*haversin(radians(lon-b.longitude)))) < %d RETURN b";
             query = String.format(query, latitude, longitude, radius);
             return this.session.run(query);
         } else{

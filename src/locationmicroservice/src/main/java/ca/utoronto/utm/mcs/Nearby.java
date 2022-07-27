@@ -52,7 +52,6 @@ public class Nearby extends Endpoint {
                 String street;
                 String driverUID;
                 JSONObject data = new JSONObject();
-                JSONObject driverID = new JSONObject();
                 while(result.hasNext()){
                     record = result.next();
                     longitude = record.get(0).get("longitude").asDouble();
@@ -60,12 +59,12 @@ public class Nearby extends Endpoint {
                     street = record.get(0).get("street").asString();
                     driverUID = record.get(0).get("uid").asString();
                     if(record.get(0).get("is_driver").asBoolean()){
-
+                        JSONObject driverID = new JSONObject();
+                        driverID.put("longitude",longitude);
+                        driverID.put("latitude", latitude);
+                        driverID.put("street", street);
+                        data.put(driverUID, driverID);
                     }
-                    driverID.put("longitude",longitude);
-                    driverID.put("latitude", latitude);
-                    driverID.put("street", street);
-                    data.put(driverUID, driverID);
                 }
                 res.put("data", data);
                 this.sendResponse(r,res,200);
