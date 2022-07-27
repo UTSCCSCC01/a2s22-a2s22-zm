@@ -32,6 +32,12 @@ public class Register extends Endpoint {
                 this.sendStatus(r,400);
                 return;
             }
+            String fields[] = {"name", "email", "password"};
+            Class<?> fieldClasses[] = {String.class, String.class, String.class};
+            if (!validateFields(deserialized, fields, fieldClasses)) {
+                this.sendStatus(r, 400);
+                return;
+            }
         } catch (Exception e){
             e.printStackTrace();
             this.sendStatus(r,500);

@@ -44,6 +44,12 @@ public class Confirm extends Endpoint {
                 passengeruid = deserialized.getString("passenger");
                 starttime = deserialized.getInt("startTime");
                 try{
+                    String fields[] = {"driver", "passenger", "startTime"};
+                    Class<?> fieldClasses[] = {String.class, String.class, Integer.class};
+                    if (!validateFields(deserialized, fields, fieldClasses)) {
+                        this.sendStatus(r, 400);
+                        return;
+                    }
                     JSONObject new_data = this.dao.trip_confirm(driveruid, passengeruid, starttime);
                     JSONObject t_id = new JSONObject();
                     t_id.put("_id", new_data);

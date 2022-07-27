@@ -29,6 +29,12 @@ public class Login extends Endpoint {
                 this.sendStatus(r, 400);
                 return;
             }
+            String fields[] = {"email", "password"};
+            Class<?> fieldClasses[] = {String.class, String.class};
+            if (!validateFields(deserialized, fields, fieldClasses)) {
+                this.sendStatus(r, 400);
+                return;
+            }
         } catch(Exception e){
             //can't find the string from deserailized
             e.printStackTrace();
