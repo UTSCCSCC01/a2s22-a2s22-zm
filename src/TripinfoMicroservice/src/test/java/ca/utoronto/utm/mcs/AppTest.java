@@ -83,7 +83,7 @@ public class AppTest {
             JSONObject jsonObject1 = new JSONObject();
             jsonObject1.put("driver", "2");
             jsonObject1.put("passenger", "1");
-            jsonObject1.put("startTime", "123456");
+            jsonObject1.put("startTime", 123456);
             HttpResponse<String> httpResponse1 = httpRequest("POST", "/trip/confirm", jsonObject1.toString());
             assertEquals(200, httpResponse1.statusCode());
             JSONObject jsonResponse = new JSONObject(httpResponse1.body());
@@ -103,8 +103,18 @@ public class AppTest {
             jsonObject1.put("driver", "2");
             jsonObject1.put("startTime", "123456");
             HttpResponse<String> httpResponse1 = httpRequest("POST", "/trip/confirm", jsonObject1.toString());
-            assertEquals(400, httpResponse1.statusCode());
+            JSONObject jsonObject2 = new JSONObject();
+            jsonObject2.put("passenger", "1");
+            jsonObject2.put("startTime", "123456");
+            HttpResponse<String> httpResponse2 = httpRequest("POST", "/trip/confirm", jsonObject2.toString());
+            JSONObject jsonObject3 = new JSONObject();
+            jsonObject3.put("passenger", "1");
+            jsonObject3.put("driver", "2");
+            HttpResponse<String> httpResponse3 = httpRequest("POST", "/trip/confirm", jsonObject3.toString());
 
+            assertEquals(400, httpResponse1.statusCode());
+            assertEquals(400, httpResponse2.statusCode());
+            assertEquals(400, httpResponse3.statusCode());
 
 
         } catch (JSONException e) {
@@ -120,7 +130,7 @@ public class AppTest {
             jsonObject1.put("distance", 2);
             jsonObject1.put("endTime", 123458);
             jsonObject1.put("timeElapsed", 2);
-            jsonObject1.put("totalCost", "120");
+            jsonObject1.put("totalCost", "120.00");
             HttpResponse<String> httpResponse1 = httpRequest("PATCH", "/trip/" + id, jsonObject1.toString());
             assertEquals(200, httpResponse1.statusCode());
 
@@ -133,12 +143,27 @@ public class AppTest {
     @Order(4)
     void UpdateTripFail() {
         try {
+            JSONObject jsonObject1 = new JSONObject();
+            jsonObject1.put("distance", 2);
+            jsonObject1.put("endTime", 123458);
+            jsonObject1.put("timeElapsed", 2);
+            HttpResponse<String> httpResponse1 = httpRequest("PATCH", "/trip/12?id=3", jsonObject1.toString());
+            assertEquals(400, httpResponse1.statusCode());
+
             JSONObject jsonObject2 = new JSONObject();
             jsonObject2.put("distance", 2);
             jsonObject2.put("endTime", 123458);
             jsonObject2.put("timeElapsed", 2);
             HttpResponse<String> httpResponse2 = httpRequest("PATCH", "/trip/12", jsonObject2.toString());
             assertEquals(400, httpResponse2.statusCode());
+
+            JSONObject jsonObject3 = new JSONObject();
+            jsonObject3.put("distance", 2);
+            jsonObject3.put("endTime", 123458);
+            jsonObject3.put("timeElapsed", 2);
+            jsonObject3.put("totalCost", "120.00");
+            HttpResponse<String> httpResponse3 = httpRequest("PATCH", "/trip/100", jsonObject3.toString());
+            assertEquals(404, httpResponse2.statusCode());
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -165,11 +190,14 @@ public class AppTest {
     void PassengerTripsFail() {
 
 
-            HttpResponse<String> httpResponse1 = httpRequest("GET", "/trip/passenger/8", "");
-            assertEquals(404, httpResponse1.statusCode());
+        HttpResponse<String> httpResponse1 = httpRequest("GET", "/trip/passenger/8", "");
+        assertEquals(404, httpResponse1.statusCode());
 
-            HttpResponse<String> httpResponse2 = httpRequest("GET", "/trip/passenger/", "");
-            assertEquals(400, httpResponse2.statusCode());
+        HttpResponse<String> httpResponse2 = httpRequest("GET", "/trip/passenger/", "");
+        assertEquals(400, httpResponse2.statusCode());
+        HttpResponse<String> httpResponse3 = httpRequest("GET", "/trip/passenger/8/3", "");
+
+        assertEquals(400, httpResponse3.statusCode());
 
     }
 
@@ -199,6 +227,50 @@ public class AppTest {
         HttpResponse<String> httpResponse2 = httpRequest("GET", "/trip/driver/", "");
         assertEquals(400, httpResponse2.statusCode());
 
+    }
+
+    @Test
+    @Order(9)
+    void DriverTimePass(){
+
+    }
+
+    @Test
+    @Order(10)
+    void DriverTimeFail(){
+        try{
+
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    @Order(11)
+    void RequestTripPass(){
+
+    }
+
+    @Test
+    @Order(12)
+    void RequestTripFail(){
+        try{
+            JSONObject jsonObject1 = new JSONObject();
+            jsonObject1.put("uid", "100");
+            jsonObject1.put("radius", 200);
+            HttpResponse<String> httpResponse1 = httpRequest("PATCH", "/trip/request", jsonObject1.toString());
+            assertEquals(404, httpResponse1.statusCode());
+
+            JSONObject jsonObject2 = new JSONObject();
+            jsonObject2.put("uid", "1");
+            jsonObject1.put("radius", -1);
+            HttpResponse<String> httpResponse2 = httpRequest("PATCH", "/trip/request", jsonObject2.toString());
+            assertEquals(400, httpResponse1.statusCode());
+
+        } catch(Exception e){
+            e.printStackTrace();
+        }
     }
 /*
     @AfterAll

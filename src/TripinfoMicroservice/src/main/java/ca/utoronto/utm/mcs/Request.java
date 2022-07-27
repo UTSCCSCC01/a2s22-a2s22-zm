@@ -63,11 +63,15 @@ public class Request extends Endpoint {
             writeOutputStream(r, jsonObject.toString());
             return;
         }
-        // TODO
+
         jsonObject = new JSONObject(Utils.convert(r.getRequestBody()));
         String fields[] = {"uid", "radius"};
         Class<?> fieldClasses[] = {String.class, Integer.class};
         if (!validateFields(jsonObject, fields, fieldClasses)) {
+            this.sendStatus(r, 400);
+            return;
+        }
+        if(jsonObject.getInt("radius")< 0){
             this.sendStatus(r, 400);
             return;
         }
