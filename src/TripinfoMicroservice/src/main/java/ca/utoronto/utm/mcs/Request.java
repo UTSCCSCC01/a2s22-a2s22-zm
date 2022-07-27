@@ -1,6 +1,6 @@
 package ca.utoronto.utm.mcs;
 
-/** 
+/**
  * Everything you need in order to send and recieve httprequests to 
  * other microservices is given here. Do not use anything else to send 
  * and/or recieve http requests from other microservices. Any other 

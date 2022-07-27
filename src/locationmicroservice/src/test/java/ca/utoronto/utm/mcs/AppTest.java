@@ -222,8 +222,8 @@ public class AppTest {
             assertEquals("Ellesmere", jsonResponse.getJSONObject("data").getJSONArray("route").getJSONObject(0).getString("street"));
             assertEquals("Borough", jsonResponse.getJSONObject("data").getJSONArray("route").getJSONObject(1).getString("street"));
             assertEquals("Town center", jsonResponse.getJSONObject("data").getJSONArray("route").getJSONObject(2).getString("street"));
-            assertEquals(4, jsonResponse.getJSONObject("data").getJSONArray("total_time"));
-            assertEquals(1, jsonResponse.getJSONObject("data").getJSONArray("route").getJSONObject(2).getString("time"));
+            assertEquals(4, jsonResponse.getJSONObject("data").getInt("total_time"));
+            assertEquals("1", jsonResponse.getJSONObject("data").getJSONArray("route").getJSONObject(2).getString("time"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
