@@ -22,11 +22,13 @@ public class Register extends Endpoint {
         String uid = "";
         try{
             if(deserialized.has("name") && deserialized.has("email") && deserialized.has("password")){
+                System.out.println("Checking Request...");
                 //check whether it is a bad request
                 name = deserialized.getString("name");
                 email = deserialized.getString("email");
                 password = deserialized.getString("password");
             } else{
+                System.out.println("Bad Request");
                 this.sendStatus(r,400);
                 return;
             }
@@ -37,7 +39,9 @@ public class Register extends Endpoint {
         }
         try{
             //get the JSONObject from PostgresDAO.java
+            System.out.println("Attempting to connect to database...");
             JSONObject new_data = this.dao.user_register(name, email, password);
+            System.out.println("Connected to Database");
             try{
                 if(new_data.has("code")){
                     user_register_res = new_data.getInt("code");
@@ -49,6 +53,7 @@ public class Register extends Endpoint {
                 if(user_register_res == 200){
                     jsonObject.put("uid", uid);
                     this.sendResponse(r, jsonObject, 200);
+                    System.out.println("Response sent");
                     return;
                 } else{
                     this.sendStatus(r, user_register_res);
@@ -67,17 +72,13 @@ public class Register extends Endpoint {
 
     @Override
     public void handlePost(HttpExchange r) throws IOException, JSONException {
+        System.out.println("CCC");
         // TODO
         String body = Utils.convert(r.getRequestBody());
         String path = r.getRequestURI().getPath();
         try{
             JSONObject deserialized = new JSONObject(body);
-            switch (path){
-                //distinguish the path
-                case "/user/register":
-                    this.user_register(r,deserialized);
-                    break;
-            }
+            this.user_register(r,deserialized);
         } catch (Exception e){
             e.printStackTrace();
             sendStatus(r, 500);

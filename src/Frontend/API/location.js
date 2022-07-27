@@ -7,7 +7,7 @@ const gatewayUrl = process.env.GATEWAY_URL || 'http://localhost:8004'
 const locationUrl = process.env.USER_URL || 'http://localhost:8000'
 
 
-const useGatewayUrl = false;
+const useGatewayUrl = true;
 
 const url = useGatewayUrl ? gatewayUrl : locationUrl
 

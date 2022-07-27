@@ -39,7 +39,7 @@ public class RequestRouter implements HttpHandler {
 
 	public static HttpResponse httpRequest(String method, String hostname, String endpoint, String body) {
 		try {
-			URI uri = new URI(hostname + PORT + endpoint);
+			URI uri = new URI("http://" + hostname + ":" + PORT + endpoint);
 			HttpClient httpClient = HttpClient.newBuilder().build();
 			HttpRequest httpRequest = HttpRequest.newBuilder().uri(uri).method(method, HttpRequest.BodyPublishers.ofString(body)).build();
 			HttpResponse<String> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
@@ -61,6 +61,7 @@ public class RequestRouter implements HttpHandler {
 
 	@Override
 	public void handle(HttpExchange r) throws IOException {
+		System.out.println("Handle invoked");
         // TODO
 		JSONObject JSON_Failed = new JSONObject();
 		try {
@@ -80,6 +81,8 @@ public class RequestRouter implements HttpHandler {
 				httpResponse = httpRequest(method, TRIP_SERVICE, path, Utils.convert(r.getRequestBody()));
 				break;
 			case "user":
+				System.out.println("Case correct");
+				System.out.println(method);
 				httpResponse = httpRequest(method, USER_SERVICE, path, Utils.convert(r.getRequestBody()));
 				break;
 		}

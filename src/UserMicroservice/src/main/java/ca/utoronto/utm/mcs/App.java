@@ -19,5 +19,6 @@ public class App {
 
         server.start();
         System.out.printf("Server started on port %d...\n", PORT);
+        System.out.println("AAA");
     }
 }

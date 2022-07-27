@@ -34,7 +34,7 @@ public class Request extends Endpoint {
 
     public static HttpResponse httpRequest(String method, String hostname, String endpoint, String body) {
         try {
-            URI uri = new URI(hostname + PORT + endpoint);
+            URI uri = new URI("http://" + hostname + ":" + PORT + endpoint);
             HttpClient httpClient = HttpClient.newBuilder().build();
             HttpRequest httpRequest = HttpRequest.newBuilder().uri(uri).method(method, HttpRequest.BodyPublishers.ofString(body)).build();
             HttpResponse<String> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
