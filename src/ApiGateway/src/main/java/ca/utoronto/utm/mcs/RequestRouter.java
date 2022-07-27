@@ -40,6 +40,7 @@ public class RequestRouter implements HttpHandler {
 	public static HttpResponse httpRequest(String method, String hostname, String endpoint, String body) {
 		try {
 			URI uri = new URI("http://" + hostname + ":" + PORT + endpoint);
+			System.out.println(uri);
 			HttpClient httpClient = HttpClient.newBuilder().build();
 			HttpRequest httpRequest = HttpRequest.newBuilder().uri(uri).method(method, HttpRequest.BodyPublishers.ofString(body)).build();
 			HttpResponse<String> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
@@ -69,8 +70,7 @@ public class RequestRouter implements HttpHandler {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-
-		String path = r.getRequestURI().getPath();
+		String path = r.getRequestURI().toString();
 		String tar = path.split("/")[1];
 		String method = r.getRequestMethod();
 		switch (tar) {

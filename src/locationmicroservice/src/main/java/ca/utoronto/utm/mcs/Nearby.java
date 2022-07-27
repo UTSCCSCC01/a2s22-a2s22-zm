@@ -18,6 +18,7 @@ public class Nearby extends Endpoint {
     @Override
     public void handleGet(HttpExchange r) throws IOException, JSONException {
         // TODO
+        System.out.println(r.getRequestURI().toString());
         String[] params = r.getRequestURI().toString().split("/");
         if (params.length != 4 || params[3].isEmpty()) {
             this.sendStatus(r, 400);
