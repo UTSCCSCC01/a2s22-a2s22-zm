@@ -198,4 +198,15 @@ public class User extends Endpoint {
 		// return 200 if everything is updated without error
 		this.sendStatus(r, 200);
 	}
+
+	@Override
+	public void handlePost(HttpExchange r) throws IOException {
+		try{
+			this.dao.clearDatabase();
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		r.sendResponseHeaders(200, -1);
+	}
 }
