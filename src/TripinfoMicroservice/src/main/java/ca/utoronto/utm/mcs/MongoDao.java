@@ -7,7 +7,9 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 
+import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Projections;
+import com.mongodb.client.model.Updates;
 import com.mongodb.util.JSON;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.bson.Document;
@@ -16,6 +18,8 @@ import org.bson.types.ObjectId;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import com.mongodb.client.model.Filters.*;
+import com.mongodb.client.model.Updates.*;
 
 import javax.print.Doc;
 
@@ -56,13 +60,26 @@ public class MongoDao {
 
 	public int trip_update(String oid, int distance, int endTime, int timeElapsed, String totalCost) {
 		ObjectId objectId = new ObjectId(oid);
+
 		Document query = new Document("_id", objectId);
 		MongoCursor<Document> mongoCursor = collection.find(query).iterator();
-		if(mongoCursor.hasNext()){
-			mongoCursor.next().append("distance", distance).append("totalCost", totalCost).append("endTime", endTime).append("timeElapsed", timeElapsed);
-			return 200;
+		if(!mongoCursor.hasNext()){
+			return 404;
 		}
-		return 404;
+
+		Bson filter = Filters.eq("_id", objectId);
+		Bson update1 = Updates.set("distance", distance);
+		Bson update2 = Updates.set("totalCost", totalCost);
+		Bson update3 = Updates.set("endTime", endTime);
+		Bson update4 = Updates.set("timeElapsed", timeElapsed);
+
+		collection.updateOne(filter, update1);
+		collection.updateOne(filter, update2);
+		collection.updateOne(filter, update3);
+		collection.updateOne(filter, update4);
+
+		return 200;
+
 	}
 
 	public JSONObject trip_passenger(String uid) {
@@ -115,7 +132,8 @@ public class MongoDao {
 
 	public JSONObject trip_drivertime(String oid) {
 		try {
-			Document query = new Document("_id", oid);
+			ObjectId objectId = new ObjectId(oid);
+			Document query = new Document("_id", objectId);
 			Bson projection = Projections.fields(Projections.include("driver", "passenger"));
 			MongoCursor<Document> mongoCursor = collection.find(query).projection(projection).iterator();
 			if(!mongoCursor.hasNext()) {

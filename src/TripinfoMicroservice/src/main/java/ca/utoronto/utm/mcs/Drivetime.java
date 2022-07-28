@@ -41,11 +41,6 @@ public class Drivetime extends Endpoint {
             return;
         }
         String tid = params[3];
-        JSONObject body = new JSONObject(Utils.convert(r.getRequestBody()));
-        if(body.length()!=0){
-            this.sendStatus(r, 400);
-            return;
-        }
         try{
             JSONObject new_data = this.dao.trip_drivertime(tid);
             if(!new_data.has("driver")){
