@@ -2,6 +2,8 @@ package ca.utoronto.utm.mcs;
 
 import java.sql.*;
 import io.github.cdimascio.dotenv.Dotenv;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class PostgresDAO {
 	
@@ -23,6 +25,101 @@ public class PostgresDAO {
 	}
 
 	// *** implement database operations here *** //
+    //check the user's email and password
+    public JSONObject user_login(String email, String password) throws SQLException, JSONException {
+        int code;
+        String uid = "";
+        String query;
+        String old_password = "";
+        JSONObject jsonObject = new JSONObject();
+        int count = 0;
+        if (email != null) {
+            query = "SELECT * FROM users WHERE email = '%s'";
+            query = String.format(query, email);
+            ResultSet rs = this.st.executeQuery(query);
+            while(rs.next()){
+                count++;
+                if(count == 1){
+                    old_password = rs.getString("password");
+                } else if (count > 1) {
+                    code = 500;
+                    break;
+                }
+            }
+            if(count == 1){
+                if(old_password.equals(password)){
+                    code = 200;
+                    query = "SELECT * FROM users WHERE email = '%s'";
+                    query = String.format(query, email);
+                    rs = this.st.executeQuery(query);
+                    if(rs.next()){
+                        uid = rs.getString("uid");
+                    }
+
+                }
+                else{
+                    code = 401;
+                }
+            }
+            else{
+                code = 404;
+            }
+        }
+        else{
+            code = 400;
+        }
+        if(code == 200){
+            jsonObject.put("code", code);
+            jsonObject.put("uid", uid);
+        }
+        else{
+            jsonObject.put("code", code);
+        }
+        return jsonObject;
+    }
+    // check whether the user is able to register
+    public JSONObject user_register(String name, String email, String password) throws SQLException, JSONException {
+        int code = 500;
+        String uid = "";
+        JSONObject jsonObject = new JSONObject();
+        String query;
+        if(email!=null){
+            query = "SELECT * FROM users WHERE email = '%s'";
+            query = String.format(query, email);
+            ResultSet rs = this.st.executeQuery(query);
+            if(rs.next()){
+                code = 409;
+            }
+            else{
+                //insert the new user into table
+                query = "INSERT INTO users (prefer_name, email, password, rides, isDriver) VALUES ('%s', '%s', '%s', 0, false)";
+                query = String.format(query, name, email, password);
+                this.st.execute(query);
+                //find the new user's uid
+                query = "SELECT * FROM users WHERE email = '%s'";
+                query = String.format(query, email);
+                rs = this.st.executeQuery(query);
+                if(rs.next()){
+                    uid = rs.getString("uid");
+                    code = 200;
+                }
+            }
+        }
+        else {
+            code = 400;
+        }
+        //send the JSON package
+        if(code == 200){
+            jsonObject.put("code", code);
+            jsonObject.put("uid", uid);
+        }
+        else{
+            jsonObject.put("code", code);
+        }
+        return jsonObject;
+
+    }
+
 
     public ResultSet getUsersFromUid(int uid) throws SQLException {
         String query = "SELECT * FROM users WHERE uid = %d";
@@ -64,5 +161,10 @@ public class PostgresDAO {
             query = String.format(query, isDriver.toString(), uid);
             this.st.execute(query);
         }
+    }
+
+    public void clearDatabase() throws SQLException {
+        String query = "DELETE FROM users";
+        this.st.execute(query);
     }
 }

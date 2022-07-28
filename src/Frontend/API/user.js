@@ -6,7 +6,7 @@ const gatewayUrl = process.env.GATEWAY_URL || 'http://localhost:8004'
 //The user microservice URL
 const userUrl = process.env.USER_URL || 'http://localhost:8001'
 
-const useGatewayUrl = false;
+const useGatewayUrl = true;
 
 const url = useGatewayUrl ? gatewayUrl : userUrl
 

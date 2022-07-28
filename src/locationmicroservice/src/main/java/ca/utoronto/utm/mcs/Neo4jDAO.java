@@ -2,6 +2,7 @@ package ca.utoronto.utm.mcs;
 
 import org.neo4j.driver.*;
 import io.github.cdimascio.dotenv.Dotenv;
+import org.neo4j.driver.Record;
 
 public class Neo4jDAO {
 
@@ -20,7 +21,22 @@ public class Neo4jDAO {
     }
 
     // *** implement database operations here *** //
+    public Result getNavigation(String driveruid, String passengeruid){
+        Result driver_loc = getUserLocationByUid(driveruid);
+        if(!driver_loc.hasNext()){
+            return driver_loc;
+        }
+        String road1 = driver_loc.next().get(2).asString();
+        Result passenger_loc = getUserLocationByUid(passengeruid);
+        if(!passenger_loc.hasNext()){
+            return passenger_loc;
+        }
+        String road2 = passenger_loc.next().get(2).asString();
+        String query = ("MATCH (source:road {name: '%s'}), (target:road {name: '%s'}) CALL gds.shortestPath.dijkstra.stream({nodeProjection: 'road', relationshipProjection: 'ROUTE_TO', sourceNode: source, targetNode: target, relationshipProperties: 'travel_time', relationshipWeightProperty: 'travel_time'}) YIELD index, nodeIds,  path RETURN nodes(path)");
+        query = String.format(query, road1, road2);
 
+        return this.session.run(query);
+    }
     public Result addUser(String uid, boolean is_driver) {
         String query = "CREATE (n: user {uid: '%s', is_driver: %b, longitude: 0, latitude: 0, street: ''}) RETURN n";
         query = String.format(query, uid, is_driver);
@@ -85,5 +101,31 @@ public class Neo4jDAO {
         String query = "MATCH (r1:road {name: '%s'})-[r:ROUTE_TO]->(r2:road {name: '%s'}) DELETE r RETURN COUNT(r) AS numDeletedRoutes";
         query = String.format(query, roadname1, roadname2);
         return this.session.run(query);
+    }
+
+    public Result findRoutetime(String roadname1, String roadname2){
+        String query = "MATCH (r1:road {name: '%s'}), (r2:road {name: '%s'}) MATCH (r1) -[r:ROUTE_TO]->(r2) RETURN r.travel_time";
+        query = String.format(query, roadname1, roadname2);
+        return this.session.run(query);
+    }
+
+    public Result getNearby(String uid, int radius){
+        Result loc = getUserLocationByUid(uid);
+        if(loc.hasNext()){
+            Record record = loc.next();
+            Double latitude = record.get(1).asDouble();
+            Double longitude = record.get(0).asDouble();
+            String query = "WITH %f AS lat, %f AS lon MATCH(b: user) WHERE 2*6378.137*asin(sqrt(haversin(radians(lat-b.latitude))+ cos(radians(lat))*cos(radians(b.latitude))*haversin(radians(lon-b.longitude)))) < %d RETURN b";
+            query = String.format(query, latitude, longitude, radius);
+            return this.session.run(query);
+        } else{
+            return loc;
+        }
+    }
+
+    public int clearDatabase() {
+
+        this.session.run("MATCH (n) DETACH DELETE n");
+        return 200;
     }
 } 

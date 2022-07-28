@@ -26,7 +26,9 @@ public abstract class Endpoint implements HttpHandler {
     }
 
     public void handle(HttpExchange r) {
+        System.out.println("BBB");
         r.getResponseHeaders().add("Access-Control-Allow-Origin", "*"); // For CORS
+        System.out.println(r.getRequestMethod());
         try {
             switch (r.getRequestMethod()) {
             case "OPTIONS":
