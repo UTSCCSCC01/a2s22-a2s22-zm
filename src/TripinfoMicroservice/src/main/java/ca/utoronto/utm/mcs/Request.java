@@ -14,10 +14,12 @@ import java.net.http.HttpResponse;
 import java.net.URI;
 
 import com.sun.net.httpserver.HttpExchange;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Iterator;
 
 public class Request extends Endpoint {
     static int PORT = 8000;
@@ -77,6 +79,30 @@ public class Request extends Endpoint {
         }
 
         HttpResponse<String> httpResponse = httpRequest("GET", LOCATION_SERVICE, "/location/nearbyDriver/" + jsonObject.get("uid") + "?radius=" + jsonObject.getString("radius"), "");
+
+        if (httpResponse.statusCode() == 200) {
+            JSONObject jsonResponse = new JSONObject(httpResponse.body());
+            Iterator<String> drivers = jsonResponse.keys();
+            JSONArray jsonArray = new JSONArray();
+            while (drivers.hasNext()) {
+                jsonArray.put(drivers.next());
+            }
+
+            JSONObject response = new JSONObject();
+            response.put("status", "OK");
+            response.put("data", jsonArray);
+
+            r.sendResponseHeaders(200, response.toString().length());
+            OutputStream os= r.getResponseBody();
+            os.write(response.toString().getBytes());
+            os.close();
+            return;
+        }
+
+
+
+
+
         r.sendResponseHeaders(httpResponse.statusCode(), httpResponse.body().length());
         OutputStream os= r.getResponseBody();
         os.write(httpResponse.body().getBytes());
