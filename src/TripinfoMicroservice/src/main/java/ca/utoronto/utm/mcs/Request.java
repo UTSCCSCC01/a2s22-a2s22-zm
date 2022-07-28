@@ -82,7 +82,7 @@ public class Request extends Endpoint {
 
         if (httpResponse.statusCode() == 200) {
             JSONObject jsonResponse = new JSONObject(httpResponse.body());
-            Iterator<String> drivers = jsonResponse.keys();
+            Iterator<String> drivers = jsonResponse.getJSONObject("data").keys();
             JSONArray jsonArray = new JSONArray();
             while (drivers.hasNext()) {
                 jsonArray.put(drivers.next());
