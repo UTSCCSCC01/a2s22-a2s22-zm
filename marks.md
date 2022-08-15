@@ -4,11 +4,11 @@
 
 **Student 2:**   zhangp85
 
-**Microservices (Worth 80%):**  0/50
+**Microservices (Worth 80%):**  41/50
 
-**Gateway (Worth 10%):**  0/10
+**Gateway (Worth 10%):**  10/10
 
-**Testing (Worth 10%):**  0/20
+**Testing (Worth 10%):**  20/20
 
-**Grade:**  0.0
+**Grade:**  0.856%
 
