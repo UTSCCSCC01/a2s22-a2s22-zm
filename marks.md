@@ -10,5 +10,4 @@
 
 **Testing (Worth 10%):**  20/20
 
-**Grade:**  0.856%
-
+**Grade:**  0.856 - 0.3 = 0.56 (Penalty for remark)
